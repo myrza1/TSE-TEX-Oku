@@ -56,13 +56,13 @@ namespace TSETEX_Oku
                                 dayOfMonth = line.Substring(line.IndexOf("/") + 1, 2);
                                 aircraftRegistration = line.Substring(line.IndexOf("/") + 4, (line.Length - 4) - (line.IndexOf("/") + 4));
                                 airport = line.Substring(line.Length - 3, 3);
-                                listBox1.Items.Add("No: " + Flight + " Day: " + dayOfMonth + " REG: " + aircraftRegistration + " Airport: " + airport);
+                                listBox1.Items.Add("No: " + Flight + " Day : " + dayOfMonth + " REG: " + aircraftRegistration + " Airport: " + airport);
                             }
                             else if (line.StartsWith("AA"))
                             {
                                 mvtType = line.Substring(0, line.IndexOf("/"));
                                 
-                                listBox1.Items.Add(mvtType + " Arrival " + mvtType.Substring(0, 2));
+                                listBox1.Items.Add(mvtType + " Arrival " + mvtType.Substring(0, 2) + " Time: " + mvtType.Substring(2, 4));
 
                             }
                             else if (line.StartsWith("AD"))
@@ -85,6 +85,42 @@ namespace TSETEX_Oku
             {
                 textBox1.Text = "Couln not read file";
             }
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            string dayStr = "1";
+            string timeStr = "2020";
+
+            textBox1.Text = Convert.ToString(ConvertLocal(dayStr,timeStr));
+        }
+
+        private DateTime ConvertLocal(string dayStr, string timeStr)
+        {
+            DateTime dateTOday = DateTime.Now;
+            DateTime dateNeed;
+            string convertedDate;
+            convertedDate = dayStr + "/" + dateTOday.Month + "/" + dateTOday.Year + " " + timeStr.Substring(0, 2)
+                + ":" + timeStr.Substring(2, 2);
+            dateNeed = Convert.ToDateTime(convertedDate);
+            dateTOday = dateNeed.AddHours(6); //UTC ғып жасаймыз
+            return dateTOday;
+        }
+
+        private DateTime FilterDate(DateTime date, string StartOrEnd)
+        {
+            if (StartOrEnd == "start")
+            {
+                date = Convert.ToDateTime(date.ToShortDateString());
+            }
+            else date = Convert.ToDateTime(date.AddDays(1).ToShortDateString());
+            return date;
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            listBox1.Items.Add(Convert.ToString(FilterDate(dateTimePicker1.Value,"start")));
+            listBox1.Items.Add(Convert.ToString(FilterDate(dateTimePicker1.Value, "end")));
         }
     }
 }
